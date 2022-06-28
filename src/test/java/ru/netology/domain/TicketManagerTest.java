@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TicketManagerTest {
     TicketRepository repository = new TicketRepository();
     TicketManager manager = new TicketManager(repository);
+    TicketByPriceAscComparator comparator = new TicketByPriceAscComparator();
     Ticket ticketUfaMoscow = new Ticket(1, 3400, "UFA", "DME", 110);
     Ticket ticketUfaKrasnoyarsk = new Ticket(2, 6350, "UFA", "KJA", 250);
     Ticket ticketUfaNovosibirsk = new Ticket(3, 5400, "UFA", "OVB", 170);
@@ -16,6 +17,8 @@ class TicketManagerTest {
     Ticket ticketUfaMsc = new Ticket(6, 5200, "UFA", "DME", 90);
     Ticket ticketSpbSochi = new Ticket(7, 2300, "LED", "AER", 120);
     Ticket ticketMoscowSochi = new Ticket(8, 3200, "DME", "AER", 140);
+    Ticket ticketMscSochiFast = new Ticket(9, 5000, "DME", "AER", 80);
+    Ticket ticketMscSochi = new Ticket(10, 4600, "DME", "AER", 110);
 
     @BeforeEach
     void setUp() {
@@ -57,6 +60,15 @@ class TicketManagerTest {
     void shouldSearchSpb() {
         Ticket[] actual = manager.searchBy("LED");
         Ticket[] expected = new Ticket[]{ticketMoscowSpb, ticketSpbSochi};
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void shouldSearchWithComparator(){
+        manager.add(ticketMscSochiFast);
+        manager.add(ticketMscSochi);
+        Ticket[] actual = manager.findAll("DME", "AER", comparator);
+        Ticket[] expected = new Ticket[]{ticketMoscowSochi, ticketMscSochi, ticketMscSochiFast};
         assertArrayEquals(expected, actual);
     }
 }
